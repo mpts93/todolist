@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>watchandcode</title>
+</head>
+<body style="text-align: center; background-image:url(https://wallpapercave.com/wp/wp7278654.jpg)">
+
+
+
+
+<div style="margin-top: 22%">
+<button id="toggle-all-button" style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); font-size: 30px; border-radius: 10px;">Toggle All</button>
+<button id="delete-all-button" style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); font-size: 30px; border-radius: 10px;">Delete All</button>
+<button id="delete-all-done-todos-button" style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); font-size: 30px; border-radius: 10px;">Delete All Done Todos</button>
+
+<br/>
+<br/>
+<button id="add-button" style="background-color: rgb(255, 255, 255); border-radius: 5px; font-size: 15px;">Add Todo</button>
+<input id="todotext-input-field" required type="text" inputmode="latin" placeholder="Enter Todo here" >
+<input id="duedate-input-field" type="date" placeholder="Enter Due Date here">
+
+<br/>
+<br/>
+<h2 style="font-size: 30px; text-decoration: underline;">Your Todos</h2>
+<ul id="todo-list-ul" style="font-size: 20px;">
+</ul>
+<br/>
+<button style="display: none; border-radius: 10px;" id="edit-button">Edit Todo</button>
+<input style="display: none;" id="edit-text-input" type="text" placeholder="Enter edited Todo, then click edit">
+</div>
+
+
+<script>
+
+var toDos = [
+
+]
+
+displayAll();
+
+      
+
+function add() {
+    var newTodoText = todotextinputField.value;
+    var newTodoDuedate = duedateinputField.value;
+    toDos.push({name: newTodoText, dueDate: newTodoDuedate, completed: false});
+    displayAll();
+    incrementAddButton();
+    todotextinputField.value = '';
+    duedateinputField.value = '';
+
+}
+
+function incrementAddButton() {
+    var addButtonNumber = toDos.length+1;
+    addButton.innerText = "Add Todo #" + addButtonNumber;
+}
+
+function displayAll() {
+   var todosUl = document.getElementById("todo-list-ul");
+   todosUl.innerHTML = '';
+
+
+    for (var i = 0; i < toDos.length; i++) {
+      var todoLi = document.createElement("li");
+      if (toDos[i].completed === true) {
+      todoLi.innerText = "[X] " + "Todo: " + toDos[i].name + ", Due Date: " + toDos[i].dueDate + "   ";
+
+      todoLi.style.setProperty("text-decoration", "line-through");
+
+
+
+      } else {
+      todoLi.innerText = "[ ] " + "Todo: " + toDos[i].name + ", Due Date: " + toDos[i].dueDate + "   ";
+      }
+
+
+      incrementAddButton();
+
+      var deleteButton = document.createElement("button");
+      deleteButton.innerText = "Delete";
+      deleteButton.addEventListener("click", erase);
+      deleteButton.id = "delete-" + i;
+      deleteButton.className = "deletebutton";
+      deleteButton.style = "background-color: rgb(255, 255, 255); border-radius: 5px; font-size: 15px; text-align: center;";
+      todosUl.appendChild(todoLi);
+      todoLi.appendChild(deleteButton);
+
+      var toggleButton = document.createElement("button");
+      toggleButton.innerText = "Toggle";
+      toggleButton.addEventListener("click", toggle);
+      toggleButton.id = "toggle-" + i;
+      toggleButton.className = "togglebutton";
+      toggleButton.style = "background-color: rgb(255, 255, 255); border-radius: 5px; font-size: 15px; text-align: center; color: black;";
+      todosUl.appendChild(todoLi);
+      todoLi.appendChild(toggleButton);
+
+      var editButton = document.createElement("button");
+      editButton.innerText = "Edit";
+      editButton.addEventListener("click", edit);
+      editButton.id = "edit-" + i;
+      editButton.className = "editbutton";
+      editButton.style = "background-color: rgb(255, 255, 255); border-radius: 5px; font-size: 15px; text-align: center;";
+      todosUl.appendChild(todoLi);
+      todoLi.appendChild(editButton);
+
+
+
+ 
+
+    }
+}
+
+
+
+
+function display(i) {
+    console.log(toDos[i]);
+
+}
+
+function edit(event) {
+    var newText = window.prompt("Enter new Todo");
+    if (newText == null) {}
+    else{
+    var position = event.target.id.split("-")[1];
+    toDos[position].name = newText;
+    displayAll();
+    position.value = '';
+    newText.value = '';
+    }
+}
+
+function erase(event) {
+    var position = event.target.id.split("-")[1];
+    toDos.splice(position, 1);
+    displayAll();
+    incrementAddButton();
+
+}
+
+function deleteAll() {
+    var length = toDos.length;
+    toDos.splice(0, length);
+    displayAll();
+    incrementAddButton();
+
+}
+
+
+function toggle(event) {
+    var position1 = event.target.id.split("-")[1];
+    if (toDos[position1].completed == false) {
+        toDos[position1].completed = true;
+
+    } else {
+        toDos[position1].completed = false;
+
+    }
+    displayAll();
+    position1 = '';
+
+}
+
+
+
+function toggleAll() {
+
+var completedTodos = 0;
+
+toDos.forEach((element) => {
+    if (element.completed == true) {
+        completedTodos++;
+    }
+});
+
+if (completedTodos == toDos.length) {
+    for (var i = 0; i < toDos.length; i++) {
+        toDos[i].completed = false;
+
+    };
+    displayAll();
+}
+    else {
+        for (var i = 0; i < toDos.length; i++){
+            if (toDos[i].completed == false) {
+                toDos[i].completed = true;
+            }
+            displayAll();
+        }
+    }
+
+}
+
+
+function deleteAllDoneTodos() {
+    for (var i = 0; i < toDos.length; i++) {
+        if(toDos[i].completed == true) {
+            toDos.splice(i, 1);
+            i--;
+        }
+    }
+    displayAll();
+    incrementAddButton();
+
+};
+
+
+
+var toggleAllButton = document.getElementById("toggle-all-button");
+toggleAllButton.addEventListener("click", toggleAll);
+
+var deleteAllButton = document.getElementById("delete-all-button");
+deleteAllButton.addEventListener("click", deleteAll);
+
+var deleteAllDoneTodosButton = document.getElementById("delete-all-done-todos-button");
+deleteAllDoneTodosButton.addEventListener("click", deleteAllDoneTodos);
+
+var addButton = document.getElementById("add-button");
+addButton.addEventListener("click", add);
+var addButtonNumber = toDos.length+1;
+addButton.innerText = "Add Todo #" + addButtonNumber;
+
+
+var todotextinputField = document.getElementById("todotext-input-field");
+var duedateinputField = document.getElementById("duedate-input-field");
+
+
+var editButton = document.getElementById("edit-button");
+editButton.addEventListener("click", edit)
+
+var editPositionInput = document.getElementById("edit-position-input");
+var editTextInput = document.getElementById("edit-text-input");
+
+
+
+
+
+
+
+
+
+
+
+todotextinputField.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("add-button").click();
+  }
+});
+
+duedateinputField.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("add-button").click();
+  }
+});
+
+
+
+
+    </script>
+</body>
+
+</html>
